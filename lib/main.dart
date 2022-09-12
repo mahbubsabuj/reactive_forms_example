@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reactive_forms_example/modules/user_form/bloc/users_form_bloc.dart';
+import 'modules/user_form/presentation/bloc/users_form_bloc.dart';
 import 'modules/users/presentation/page/users_screen.dart';
 
 void main() {

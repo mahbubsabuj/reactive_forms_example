@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_forms_example/modules/home/presentation/page/home_screen.dart';
-import 'package:reactive_forms_example/modules/user_form/bloc/users_form_bloc.dart';
 import 'package:reactive_forms_example/modules/users/services/users_service.dart';
 
 import '../../data/models/user_model.dart';
+import '../bloc/users_form_bloc.dart';
+import '../widgets/auto_complete_input.dart';
+import '../widgets/country_input.dart';
+import '../widgets/email_input.dart';
+import '../widgets/gender_input.dart';
+import '../widgets/name_input.dart';
+import '../widgets/password_input.dart';
+import '../widgets/submit_button.dart';
 
 class UserFormScreen extends StatefulWidget {
   const UserFormScreen({Key? key, this.isUpdateScreen = false, this.id = 0})
@@ -33,6 +40,8 @@ class _UserFormScreenState extends State<UserFormScreen> {
         FormControl<String>(value: '', validators: [Validators.required]),
     'gender': FormControl<String>(value: '', validators: [Validators.required]),
     'country':
+        FormControl<String>(value: '', validators: [Validators.required]),
+    'userName':
         FormControl<String>(value: '', validators: [Validators.required]),
   }, validators: [
     Validators.mustMatch('password', 'confirmPassword'),
@@ -157,253 +166,24 @@ class _UserFormScreenState extends State<UserFormScreen> {
                         'password and confirm password should be same.',
                   ),
                   GenderInput(signUpForm: _signUpForm),
+                  AutoCompleteInput(
+                    formControlName: 'userName',
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   const CountryInput(),
-                  SubmitButton(widget: widget, signUpForm: _signUpForm),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  SubmitButton(
+                      isUpdateScreen: widget.isUpdateScreen,
+                      signUpForm: _signUpForm),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class NameInput extends StatelessWidget {
-  const NameInput({
-    Key? key,
-    required this.formControlName,
-    required this.hintText,
-    required this.label,
-    required this.validationMessage,
-  }) : super(key: key);
-  final String formControlName;
-  final String hintText;
-  final String label;
-  final String validationMessage;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: ReactiveTextField(
-          formControlName: formControlName,
-          decoration: InputDecoration(
-            hintText: hintText,
-            label: Text(label),
-          ),
-          validationMessages: {
-            ValidationMessage.required: (error) => validationMessage,
-          }),
-    );
-  }
-}
-
-class EmailInput extends StatelessWidget {
-  const EmailInput({
-    Key? key,
-    required this.formControlName,
-    required this.hintText,
-    required this.label,
-    required this.requiredValidationMessage,
-    required this.emailValidationMessage,
-    required this.mustMatchValidationMessage,
-  }) : super(key: key);
-  final String formControlName;
-  final String hintText;
-  final String label;
-  final String requiredValidationMessage;
-  final String emailValidationMessage;
-  final String mustMatchValidationMessage;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: ReactiveTextField(
-        formControlName: formControlName,
-        decoration: InputDecoration(
-          hintText: hintText,
-          label: Text(label),
-        ),
-        validationMessages: {
-          ValidationMessage.required: (error) => requiredValidationMessage,
-          ValidationMessage.email: (error) => emailValidationMessage,
-          ValidationMessage.mustMatch: (error) => mustMatchValidationMessage
-        },
-      ),
-    );
-  }
-}
-
-class PasswordInput extends StatelessWidget {
-  const PasswordInput({
-    Key? key,
-    required this.formControlName,
-    required this.hintText,
-    required this.label,
-    required this.requiredValidationMessage,
-    required this.mustMatchValidationMessage,
-  }) : super(key: key);
-  final String formControlName;
-  final String hintText;
-  final String label;
-  final String requiredValidationMessage;
-  final String mustMatchValidationMessage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: ReactiveTextField(
-        formControlName: formControlName,
-        decoration: InputDecoration(
-          hintText: hintText,
-          label: Text(label),
-        ),
-        validationMessages: {
-          ValidationMessage.required: (error) => requiredValidationMessage,
-          ValidationMessage.mustMatch: (error) => mustMatchValidationMessage
-        },
-      ),
-    );
-  }
-}
-
-class GenderInput extends StatelessWidget {
-  const GenderInput({
-    Key? key,
-    required FormGroup signUpForm,
-  })  : _signUpForm = signUpForm,
-        super(key: key);
-
-  final FormGroup _signUpForm;
-
-  @override
-  Widget build(BuildContext context) {
-    return ReactiveValueListenableBuilder<String>(
-      formControlName: 'gender',
-      builder: (context, value, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Gender",
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 20,
-              ),
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _signUpForm.control('gender').value == 'Male',
-                  onChanged: (_) => {
-                    value.updateValue('Male'),
-                  },
-                ),
-                const Text("Male"),
-                Checkbox(
-                  value: _signUpForm.control('gender').value == 'Female',
-                  onChanged: (_) => {
-                    value.updateValue('Female'),
-                  },
-                ),
-                const Text("Female"),
-                Checkbox(
-                  value: _signUpForm.control('gender').value == 'Other',
-                  onChanged: (_) => {
-                    value.updateValue('Other'),
-                  },
-                ),
-                const Text("Other"),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class CountryInput extends StatelessWidget {
-  const CountryInput({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Country",
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 20,
-          ),
-        ),
-        ReactiveDropdownField(
-          validationMessages: {
-            ValidationMessage.required: (error) => 'please select a country',
-          },
-          hint: const Text("Select your country"),
-          formControlName: 'country',
-          items: const [
-            DropdownMenuItem(
-              value: 'Bangladesh',
-              child: Text("Bangladesh"),
-            ),
-            DropdownMenuItem(
-              value: 'India',
-              child: Text("India"),
-            ),
-            DropdownMenuItem(
-              value: 'Sri Lanka',
-              child: Text("Sri Lanka"),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class SubmitButton extends StatelessWidget {
-  const SubmitButton({
-    Key? key,
-    required this.widget,
-    required FormGroup signUpForm,
-  })  : _signUpForm = signUpForm,
-        super(key: key);
-
-  final UserFormScreen widget;
-  final FormGroup _signUpForm;
-
-  void _onFormSubmit(BuildContext context) {
-    context.read<UsersFormBloc>().add(
-          FormSubmitted(
-            user: UserModel(
-              id: 10,
-              country: _signUpForm.control('country').value,
-              email: _signUpForm.control('email').value,
-              firstName: _signUpForm.control('firstName').value,
-              lastName: _signUpForm.control('lastName').value,
-              gender: _signUpForm.control('gender').value,
-              password: _signUpForm.control('password').value,
-            ),
-          ),
-        );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 30,
-      width: MediaQuery.of(context).size.width - 20,
-      child: ElevatedButton(
-        onPressed: ReactiveForm.of(context)!.invalid
-            ? null
-            : () => _onFormSubmit(context),
-        child: Text(widget.isUpdateScreen ? 'Update' : 'Create'),
       ),
     );
   }

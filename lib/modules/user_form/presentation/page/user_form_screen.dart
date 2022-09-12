@@ -34,8 +34,11 @@ class _UserFormScreenState extends State<UserFormScreen> {
         value: '', validators: [Validators.required, Validators.email]),
     'confirmEmail': FormControl<String>(
         value: '', validators: [Validators.required, Validators.email]),
-    'password':
-        FormControl<String>(value: '', validators: [Validators.required]),
+    'password': FormControl<String>(value: '', validators: [
+      Validators.required,
+      Validators.pattern(RegExp(
+          r"^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;''<>,.?_]).{8,}"))
+    ]),
     'confirmPassword':
         FormControl<String>(value: '', validators: [Validators.required]),
     'gender': FormControl<String>(value: '', validators: [Validators.required]),
@@ -47,6 +50,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
     Validators.mustMatch('password', 'confirmPassword'),
     Validators.mustMatch('email', 'confirmEmail'),
   ]);
+
   Future<void> _getUser() async {
     UserModel user = await UsersService().getUser(widget.id);
     _updateForm(user);
@@ -153,6 +157,8 @@ class _UserFormScreenState extends State<UserFormScreen> {
                     label: 'Password',
                     requiredValidationMessage:
                         'Password field must not be empty',
+                    patternValidationMessage:
+                        '''Password must be at least 8 characters and contain at least one letter and number''',
                     mustMatchValidationMessage:
                         'password and confirm password should be same.',
                   ),

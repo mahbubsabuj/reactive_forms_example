@@ -7,12 +7,14 @@ class PasswordInput extends StatelessWidget {
     required this.formControlName,
     required this.hintText,
     required this.label,
+    this.patternValidationMessage,
     required this.requiredValidationMessage,
     required this.mustMatchValidationMessage,
   }) : super(key: key);
   final String formControlName;
   final String hintText;
   final String label;
+  final String? patternValidationMessage;
   final String requiredValidationMessage;
   final String mustMatchValidationMessage;
 
@@ -28,7 +30,8 @@ class PasswordInput extends StatelessWidget {
         ),
         validationMessages: {
           ValidationMessage.required: (error) => requiredValidationMessage,
-          ValidationMessage.mustMatch: (error) => mustMatchValidationMessage
+          ValidationMessage.mustMatch: (error) => mustMatchValidationMessage,
+          ValidationMessage.pattern: (error) => patternValidationMessage ?? '',
         },
       ),
     );
